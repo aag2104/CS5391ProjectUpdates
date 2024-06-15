@@ -1,0 +1,218 @@
+Tasks: 
+1. Run a python program to experiment with embeddings 
+2. Run a Ollama on Genuse servers
+3. Build my own RAG and run it locally (w/ langchain, ollama, and streamlit)
+
+Task 1: Run a python program to experiment with embeddings 
+* Explored Huggingface: https://huggingface.co/docs/transformers/en/installation
+* Installed "Transformers" package from Huggingface onto virtual environment
+    `python3 -m vent .env`
+    `source .env/bin/activate`
+    `pip install transformers` #virtual environment was used because i had trouble installing transformers globally
+* Installed Jupyter Notebook onto virtual environment
+* Opened JN and created a new project
+* Inputted code provided by Dr.C #interestingly, i had trouble running the first couple lines in a single cell, so i had to split them up
+Dr.C's code: 
+```   
+    import torch
+    from transformers import AutoTokenizer, AutoModel
+    # Load pre-trained LLM model and tokenizer
+    model_name = "sentence-transformers/paraphrase-MiniLM-L6-v2"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name)
+    # Example sentences
+    sentence1 = "The quick brown fox jumps over the lazy dog."
+    sentence2 = "A fast brown fox leaps over a lazy dog."
+    # Tokenize and encode the sentences
+    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True,
+    truncation=True)
+    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True,
+    truncation=True)
+    # Get sentence embeddings
+    with torch.no_grad():
+    embeddings1 = model(**inputs1).last_hidden_state.mean(dim=1)
+    embeddings2 = model(**inputs2).last_hidden_state.mean(dim=1)
+    # Compute cosine similarity
+    cosine_similarity = torch.nn.functional.cosine_similarity(embeddings1,
+    embeddings2)
+    print(f"Sentence 1: {sentence1}")
+    print(f"Sentence 2: {sentence2}")
+    print(f"Cosine Similarity: {cosine_similarity.item()}")
+```
+
+Task 2: Run a Ollama on Genuse servers
+* Downloaded Cisco VPN to allow remote login to Genuse servers
+* Started a VPN connection through the Cisco app 
+* Opened up my terminal, connected to a Genuse server 
+    `ssh ageer@genuse60.smu.edu`
+* Entered prompt: 
+    `ollama serve`
+* Opened up a second terminal window and connected to the same Genuse server (60) 
+* Entered prompt: 
+    `ollama run llama2` #this line loaded the LLM, giving me a prompt 
+
+Task 3: Build my own RAG and run it locally (w/ langchain, ollama, and streamlit)
+* Started a VPN connection through the Cisco app 
+* Opened up my terminal, connected to a Genuse server 
+    `ssh ageer@genuse60.smu.edu`
+* Entered prompt: 
+    `ollama serve`
+* Opened up a second terminal window and connected to the same Genuse server (60) 
+* Create virtual environment:
+    `python3 -m vent .env`
+    `source .env/bin/activate`
+* Entered prompts: 
+    `ollama pull mistral`
+    `ollama list`
+* Built RAG pipline with the following code provided by https://medium.com/@vndee.huynh/build-your-own-rag-and-run-it-locally-langchain-ollama-streamlit-181d42805895
+RAG Code: 
+```
+    from langchain_community.vectorstores import Chroma
+    from langchain_community.chat_models import ChatOllama
+    from langchain_community.embeddings import FastEmbedEmbeddings
+    from langchain.schema.output_parser import StrOutputParser
+    from langchain_community.document_loaders import PyPDFLoader
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain.schema.runnable import RunnablePassthrough
+    from langchain.prompts import PromptTemplate
+    from langchain.vectorstores.utils import filter_complex_metadata
+    
+    
+    class ChatPDF:
+        vector_store = None
+        retriever = None
+        chain = None
+    
+        def __init__(self):
+            self.model = ChatOllama(model="mistral")
+            self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
+            self.prompt = PromptTemplate.from_template(
+                """
+                <s> [INST] Vous êtes un assistant pour les tâches de réponse aux questions. Utilisez les éléments de contexte suivants pour répondre à la question. 
+                Si vous ne connaissez pas la réponse, dites simplement que vous ne savez pas.. Utilisez trois phrases
+                 maximum et soyez concis dans votre réponse. [/INST] </s> 
+                [INST] Question: {question} 
+                Context: {context} 
+                Answer: [/INST]
+                """
+            )
+    
+        def ingest(self, pdf_file_path: str):
+            docs = PyPDFLoader(file_path=pdf_file_path).load()
+            chunks = self.text_splitter.split_documents(docs)
+            chunks = filter_complex_metadata(chunks)
+    
+            vector_store = Chroma.from_documents(documents=chunks, embedding=FastEmbedEmbeddings())
+            self.retriever = vector_store.as_retriever(
+                search_type="similarity_score_threshold",
+                search_kwargs={
+                    "k": 3,
+                    "score_threshold": 0.5,
+                },
+            )
+    
+            self.chain = ({"context": self.retriever, "question": RunnablePassthrough()}
+                          | self.prompt
+                          | self.model
+                          | StrOutputParser())
+    
+        def ask(self, query: str):
+            if not self.chain:
+                return "Please, add a PDF document first."
+    
+            return self.chain.invoke(query)
+    
+        def clear(self):
+            self.vector_store = None
+            self.retriever = None
+            self.chain = None
+```
+* Created a new file through terminal (touch rag.py)
+* Opened and filled the file with the above code (nano rag.py)
+* Drafted a simple UI with the following code provided by https://medium.com/@vndee.huynh/build-your-own-rag-and-run-it-locally-langchain-ollama-streamlit-181d42805895
+App Code: 
+```
+    import os
+    import tempfile
+    import streamlit as st
+    from streamlit_chat import message
+    from rag import ChatPDF
+    
+    st.set_page_config(page_title="ChatPDF")
+    
+    
+    def display_messages():
+        st.subheader("Chat")
+        for i, (msg, is_user) in enumerate(st.session_state["messages"]):
+            message(msg, is_user=is_user, key=str(i))
+        st.session_state["thinking_spinner"] = st.empty()
+    
+    
+    def process_input():
+        if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
+            user_text = st.session_state["user_input"].strip()
+            with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
+                agent_text = st.session_state["assistant"].ask(user_text)
+    
+            st.session_state["messages"].append((user_text, True))
+            st.session_state["messages"].append((agent_text, False))
+    
+    
+    def read_and_save_file():
+        st.session_state["assistant"].clear()
+        st.session_state["messages"] = []
+        st.session_state["user_input"] = ""
+    
+        for file in st.session_state["file_uploader"]:
+            with tempfile.NamedTemporaryFile(delete=False) as tf:
+                tf.write(file.getbuffer())
+                file_path = tf.name
+    
+            with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file.name}"):
+                st.session_state["assistant"].ingest(file_path)
+            os.remove(file_path)
+    
+    
+    def page():
+        if len(st.session_state) == 0:
+            st.session_state["messages"] = []
+            st.session_state["assistant"] = ChatPDF()
+    
+        st.header("ChatPDF")
+    
+        st.subheader("Upload a document")
+        st.file_uploader(
+            "Upload document",
+            type=["pdf"],
+            key="file_uploader",
+            on_change=read_and_save_file,
+            label_visibility="collapsed",
+            accept_multiple_files=True,
+        )
+    
+        st.session_state["ingestion_spinner"] = st.empty()
+    
+        display_messages()
+        st.text_input("Message", key="user_input", on_change=process_input)
+    
+    
+    if __name__ == "__main__":
+        page()
+```
+* Created a new file through terminal (touch app.py)
+* Opened and filled the file with the above code (nano app.py)
+* Installed all necessary packages with pip: streamlit, streamlit_chat, langchain, PyPDF2, numpy, pandas, chroma, and qdrant fastembeddings
+    `pip install streamlit streamlit_chat langchain PyPDF2 numpy pandas chroma` #i don't believe qdrant fastembeddings could be installed through pip
+* Ran final code: 
+    `streamlit run app.py` #a browser window should pop up with a the chatPDF application
+
+Task 3 Roadblocks: 
+Problem 1: Getting my computer to recognize that I’ve installed streamlit (error: streamlit command not found)
+Solution: Switched to using a virtual environment
+
+Problem 2: Locating files from my virtual environment
+Solution: This was just a problem of me being stupid. I wasn’t thinking that my virtual environment wouldn’t be able to access files on my local system. So, I kept trying to access app.py and rag.py on my local computer. I just had to create app.py and rag.py on my virtual environment. 
+
+Problem 3: Viewing streamlit in my browser
+Solution?: I have yet to find the solution to this problem. Although, I think i was creating my VE after typing the command `ollama pull mistral` which might have been causing the issue. I've still yet to test things again.
+
