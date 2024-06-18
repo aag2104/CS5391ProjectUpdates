@@ -1,0 +1,20 @@
+Task: Build a Generative Search Engine for My Local Files Using Llama 3
+
+System Design: 
+  1. An index with the content of the local files, with an information retrieval engine to retrieve the most relevant documents for a given query/question.
+  2. A language model to use selected content from local documents and generate a summarized answer
+  3. A user interface
+
+How the Components Interact: 
+~ Qdrant creates index from local files
+~ The user asks Streamlit a question 
+~ Streamlit retrieves relative document chunks 
+~ Streamlit passes the user's question with top retrieved documents to Llama 3 and intructions L3 to generate an answer
+~ L3 generates an answer to Streamlit 
+~ Streamlit returns answer to user
+
+Building a Semantic Index: 
+  What is a Semantic Index? Why do we need one? A semantic index that will provide us with the most relevant documents based on the similarity of the file's content and a given query.
+  We use Qdrant as a vector store to create such an index. 
+
+
