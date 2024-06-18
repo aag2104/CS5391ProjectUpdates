@@ -6,7 +6,7 @@ Tasks:
 Task 1: Run a python program to experiment with embeddings 
 * Explored Huggingface: https://huggingface.co/docs/transformers/en/installation
 * Installed "Transformers" package from Huggingface onto virtual environment
-    `python3 -m vent .env`
+    `python3 -m venv .env`
     `source .env/bin/activate`
     `pip install transformers` #virtual environment was used because i had trouble installing transformers globally
 * Installed Jupyter Notebook onto virtual environment
