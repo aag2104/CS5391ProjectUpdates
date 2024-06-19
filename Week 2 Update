@@ -17,4 +17,64 @@ Building a Semantic Index:
   What is a Semantic Index? Why do we need one? A semantic index that will provide us with the most relevant documents based on the similarity of the file's content and a given query.
   We use Qdrant as a vector store to create such an index. 
 
+Step 1: Create VE 
+  `python3 -m venv myev`
+  `source myev/bin/activate`
+
+Step 2: Install Qdrant Client and Other Necessary Packages
+  `pip install qdrant-client` # Install Qdrant client for semantic indexing
+  `pip install transformers` # Install language model libraries from Hugging Face
+  `pip install streamlit` # Install Streamlit for the UI
+  `pip install fastapi uvicorn` # Install FastAPI and Uvicorn for the web service
+  `pip install python-docx PyPDF2 python-pptx` # Install additional libraries for handling documents
+
+  OR you can use this line of code: 
+    `pip install streamlit fastapi uvicorn qdrant-client transformers python-docx PyPDF2 python-pptx`
+
+
+Step 3: Creating a Vector Index
+  "In order to create a vector index, we will have to embed the documents on the hard drive." 
+  "For embeddings, we will have to select the right embedding method and the right vector comparison metric."
+
+  We need an embedding model that will work well with asymmetric search problems. 
+  "Asymmetric search problems are common to information retrieval and happen when one has short queries and long documents."
+
+  "Embedding models fine-tuned on the MSMARCO dataset usually work well."
+  "MSMARCO dataset is based on Bing Search queries and documents and has been released by Microsoft. Therefore, it is ideal for the problem we are dealing with."
+
+  The model we are using uses dot product as the similarity metric instead of cosine similarity. 
+  The model: sentence-transformers/msmarco-bert-base-dot-v5
+
+  NOTE: In order to run Qdrant-related python code, you must ensure that the qdrant server is running.
+  `docker run -p 6333:6333 qdrant/qdrant`
+
+  `touch qclientSU.py`
+  `nano qclientSU.py`
+  ```
+    from qdrant_client import QdrantClient
+    from qdrant_client.http.models import CreateCollection, Distance, VectorParams
+
+    # Initialize the Qdrant client
+    client = QdrantClient(host='localhost', port=6333)
+
+    # Define the collection name
+    collection_name = "MyCollection"
+
+    # Check if the collection exists and create if it does not
+    if not client.collection_exists(collection_name=collection_name):
+      print(f"Collection '{collection_name}' does not exist. Creating now...")
+      client.create_collection(
+        collection_name=collection_name,
+        vectors_config=VectorParams(size=768, distance=Distance.DOT)  # Example params
+      )
+      print("Collection created successfully!")
+    else:
+      print(f"Collection '{collection_name}' already exists.")
+  ```
+You should recieve this message: 
+  Collection 'MyCollection' does not exist. Creating now...
+  Collection created successfully!
+
+  Now, you need to install the embedding model from huggingface:
+    `pip install transformers sentence-transformers`
 
