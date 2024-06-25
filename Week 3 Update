@@ -1,0 +1,9 @@
+This week's task is to make my own vector database on my local machine. 
+By the end of this week, the goal is to be able to type in a query, have my machine process the query and use and embedding model to generate an embedding and store it in a vector database.
+Ideally, I'll be able to compare embedding through cosine similarity or other indexing methods. 
+
+Method 1: I asked ChatGPT, "how can i create my own vector database on my local machine?"
+ChatGPT explained 6 steps- Choosing an embedding model, preparing my data, generating embeddings, setting up a vector database, indexing embeddings, and querying the database
+
+Let's start with Step 1: Choosing an Embedding Model
+
