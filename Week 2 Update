@@ -31,7 +31,6 @@ Step 2: Install Qdrant Client and Other Necessary Packages
   OR you can use this line of code: 
     `pip install streamlit fastapi uvicorn qdrant-client transformers python-docx PyPDF2 python-pptx`
 
-
 Step 3: Creating a Vector Index
   "In order to create a vector index, we will have to embed the documents on the hard drive." 
   "For embeddings, we will have to select the right embedding method and the right vector comparison metric."
@@ -45,36 +44,23 @@ Step 3: Creating a Vector Index
   The model we are using uses dot product as the similarity metric instead of cosine similarity. 
   The model: sentence-transformers/msmarco-bert-base-dot-v5
 
-  NOTE: In order to run Qdrant-related python code, you must ensure that the qdrant server is running.
-  `docker run -p 6333:6333 qdrant/qdrant`
+Step 3 and 4: Generative Search API and User Interface
 
-  `touch qclientSU.py`
-  `nano qclientSU.py`
-  ```
-    from qdrant_client import QdrantClient
-    from qdrant_client.http.models import CreateCollection, Distance, VectorParams
+Luckily, the article we are using as a guide has attached a github. This will help with creating the index.
+So, lets clone the repo: https://github.com/nikolamilosevic86/local-genAI-search
+  git clone https://github.com/nikolamilosevic86/local-gen-search.git
+  cd local-gen-search
+  pip install -r requirements.txt
 
-    # Initialize the Qdrant client
-    client = QdrantClient(host='localhost', port=6333)
+Then, we must create a create a file called environment_var.py and put my huggingface API key there. 
 
-    # Define the collection name
-    collection_name = "MyCollection"
+file: 
+  import os
+  hf_token = "hf_you_api_key"
+  nvidia_key = "nvapi-your_nvidia_nim_api_key"
 
-    # Check if the collection exists and create if it does not
-    if not client.collection_exists(collection_name=collection_name):
-      print(f"Collection '{collection_name}' does not exist. Creating now...")
-      client.create_collection(
-        collection_name=collection_name,
-        vectors_config=VectorParams(size=768, distance=Distance.DOT)  # Example params
-      )
-      print("Collection created successfully!")
-    else:
-      print(f"Collection '{collection_name}' already exists.")
-  ```
-You should recieve this message: 
-  Collection 'MyCollection' does not exist. Creating now...
-  Collection created successfully!
+I also need to request access to Llama3 model at https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
+NOTE!!! AT THIS POINT I ABANDONED THE PROJECT. WILL COME BACK WHEN MY REQUESTED ACCESS TO LLAMA 3 ON HUGGING FACE IS GRANTED.
 
-  Now, you need to install the embedding model from huggingface:
-    `pip install transformers sentence-transformers`
+Task 2: 
 
