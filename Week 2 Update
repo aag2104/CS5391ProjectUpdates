@@ -1,6 +1,6 @@
-Weekly Summary: This week I intially began working on creating a generative search engine on my local machine. I attempted to follow an article off of medium.com.
-I believe if i come back to this project i could suceeed. Although, currently im running into some difficulties. Therefore, I plan to abandon the project temporarily and begin a new task. 
-The additional task i started this week was to create my own vector database on my local machine. With help from chatgpt, i've sucessfully managed to generate embedddings, create a vector 
+Weekly Summary: This week I initially began working on creating a generative search engine on my local machine. I attempted to follow an article off of medium.com.
+I believe if i come back to this project i could succeed. Although, currently im running into some difficulties. Therefore, I plan to abandon the project temporarily and begin a new task. 
+The additional task i started this week was to create my own vector database on my local machine. With help from chatgpt, i've successfully managed to generate embeddings, create a vector 
 database, and query the database.
 
 Task: Build a Generative Search Engine for My Local Files Using Llama 3
@@ -14,7 +14,7 @@ How the Components Interact:
 ~ Qdrant creates index from local files
 ~ The user asks Streamlit a question 
 ~ Streamlit retrieves relative document chunks 
-~ Streamlit passes the user's question with top retrieved documents to Llama 3 and intructions L3 to generate an answer
+~ Streamlit passes the user's question with top retrieved documents to Llama 3 and instructions L3 to generate an answer
 ~ L3 generates an answer to Streamlit 
 ~ Streamlit returns answer to user
 
