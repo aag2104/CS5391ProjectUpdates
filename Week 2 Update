@@ -1,3 +1,8 @@
+Weekly Summary: This week I intially began working on creating a generative search engine on my local machine. I attempted to follow an article off of medium.com.
+I believe if i come back to this project i could suceeed. Although, currently im running into some difficulties. Therefore, I plan to abandon the project temporarily and begin a new task. 
+The additional task i started this week was to create my own vector database on my local machine. With help from chatgpt, i've sucessfully managed to generate embedddings, create a vector 
+database, and query the database.
+
 Task: Build a Generative Search Engine for My Local Files Using Llama 3
 
 System Design: 
@@ -62,5 +67,90 @@ file:
 I also need to request access to Llama3 model at https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
 NOTE!!! AT THIS POINT I ABANDONED THE PROJECT. WILL COME BACK WHEN MY REQUESTED ACCESS TO LLAMA 3 ON HUGGING FACE IS GRANTED.
 
-Task 2: 
+Task 2: This week's task is to make my own vector database on my local machine. 
 
+By the end of this week, the goal is to be able to type in a query, have my machine process the query and use and embedding model to generate an embedding and store it in a vector database.
+Ideally, I'll be able to compare embedding through cosine similarity or other indexing methods. 
+
+Method 1: I asked ChatGPT, "how can i create my own vector database on my local machine?"
+ChatGPT explained 6 steps- Choosing an embedding model, preparing my data, generating embeddings, setting up a vector database, indexing embeddings, and querying the database
+
+Let's start with Step 1: Choosing an Embedding Model
+Because we are going to have the machine interpret text, we might want to use a model like BERT or word2vec.
+If i was going to be working with images, i might want to a model like ResNet (this is something i recall from my work on the jetson)
+
+Step 2: Preparing the Data
+Because this is just a test run, i'm gonna skip over this step. I don't have much data to "prepare"
+
+Step 3: Generating Embeddings
+Okay, so here's where things should get interesting. 
+I'm gonna use the "Sentence Transformers" library (per chatgpt's reccomendation) to convert the text data into embeddings. You will be able to observe 
+
+Step 4: Setting up a Vector Database
+I will be using the Faiss (Facebook AI Similarity Search) database becsaue its optimized for efficiency in clustering and similarity search
+
+Before moving on to steps 5 and 6, lets begin working on steps 1-4:
+
+Let's create a virtual environment:
+  `python3 -m venv vecDB`
+  `source myev/bin/activate`
+
+Now lets install the embedding model and the vector database
+  `pip install faiss-cpu sentence-transformers`
+
+Now lets write some python code and use the sentence transformers library to convert our text into embeddings: 
+NOTE: For the coding portions i went ahead and installed juypter notebook in my virtual environment: pip install notebook
+```
+  from sentence_transformers import SentenceTransformer
+  
+  # Initialize the model
+  model = SentenceTransformer('all-MiniLM-L6-v2')
+  
+  # Sample data: list of sentences
+  texts = ["The quick brown fox jumps over the lazy dog",
+           "To be or not to be, that is the question",
+           "All human beings are born free and equal in dignity and rights"]
+  
+  # Generate embeddings
+  embeddings = model.encode(texts)
+```
+
+Here's where i run into my first minor issue: when going into JN and beginning to run the above code i get a error that says i havent installed the sentence-transformers library.
+I feel confident that im in the correct directory in JN, but i must not be. So, to avoid any more issues I just ran the line "pip install faiss-cpu sentence-transformer" in my notebook
+
+Alright first step has been a success. Now to create a Faiss index (Step 4/5): 
+```
+  import faiss
+  
+  # Dimension of the embeddings
+  dimension = embeddings.shape[1]
+  
+  # Creating the index
+  index = faiss.IndexFlatL2(dimension)
+  
+  # Adding embeddings to the index
+  index.add(embeddings)
+```
+Code worked with no errors!
+
+Now lets query the index (Step 6): 
+```
+  # New sentence to find similar sentences from our database
+  query_text = "Freedom and equality are fundamental human rights."
+  
+  # Generate embedding for the query
+  query_embedding = model.encode([query_text])
+  
+  # Search the index for the top 2 most similar sentences
+  k = 2  # Number of nearest neighbors
+  distances, indices = index.search(query_embedding, k)
+  
+  print("Nearest sentences:")
+  for idx, distance in zip(indices[0], distances[0]):
+      print(f"Sentence: '{texts[idx]}', Distance: {distance}")
+```
+Here's my output: 
+
+Nearest sentences:
+Sentence: 'All human beings are born free and equal in dignity and rights', Distance: 0.5505369901657104
+Sentence: 'To be or not to be, that is the question', Distance: 1.5954135656356812
