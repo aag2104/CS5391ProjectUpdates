@@ -1,9 +1,117 @@
-This week's task is to make my own vector database on my local machine. 
-By the end of this week, the goal is to be able to type in a query, have my machine process the query and use and embedding model to generate an embedding and store it in a vector database.
-Ideally, I'll be able to compare embedding through cosine similarity or other indexing methods. 
+TASK: This week I followed along David Ondrej's Youtube video called "Build Anything with AI Agents, Here's How"
 
-Method 1: I asked ChatGPT, "how can i create my own vector database on my local machine?"
-ChatGPT explained 6 steps- Choosing an embedding model, preparing my data, generating embeddings, setting up a vector database, indexing embeddings, and querying the database
+Video Notes: 
 
-Let's start with Step 1: Choosing an Embedding Model
+* AI Agents are the next big thing 
+* Andrej Karpathy (OpenAI Co-Founder) - AGI will be buildt through AI Agents
+* What is missing for the Agent Revolution? better LLMs + cheaper API costs + simple and clean UI
 
+* What are AI Agents? AI Agents are systems designed to make decisions and take actions towards a goal. An AI Agent acts on its own without needing step-by-setp instructions from a human. Think of them as helpful assistants or employees powered by LLMs 
+* Agents have AGENCY: Chatbots like ChatGPT don't have Agency, they cannot take action / do things. Agency is Action: An agent without agency is just a passive observer -> not an agent
+* LLMs are the brains of AI Agents, more intelligent LLM = more useful Agent (we have a lot to look forward to with the release of GPT-5)... so we should begin learning about agents now to prepare for the release of newer, better LLMs like GPT-5
+
+Which tasks should you give your Agent? 
+  * current agents exel at automating tasks that are clear, simple, with a well-defined goal
+  * focus on small, repetitive tasks you do everyday - not huge "once in a while" tasks
+  * it's essential to have realistic expectations and understand that agents can't do everything just yet (that would be AGI...)
+
+How are agents used today?
+  * automatic 24/7 research - Agents sitting inside of Reddit, Twitter, etc...
+  * software engineering - agents like Devin are building, optimizing and debugging code
+  * customer service - 75% of Klarna's support team are AI Agents; 2.3M conversations, better satisfaction scores
+
+System 1 vs System 2 Thinking: 
+  * LLMs (like ChatGPT) can only do system 1 thinking - quick next-token prediction
+  * slow, strategic, methodical reasoning (system 2 thinking) has not been achieved in AI...yet.
+  * agents are the first step towards giving AI the ability to form long-term plans and execute upon them - i.e. step towards system 2
+
+Popular AI Agent Frameworks: 
+  * there are doznes of different ways to build AI Agents -- every week we get a new one!
+  * most popular: AutoGPT, BabyGPT, CrewAI, AutoGen, MultiOn, ChatDev, MetaGPT...
+  * choosing the right framwork is perhaps the most important decision
+
+How do you choose a framework?
+  * the "best" framework depends on YOU and what you want to build
+  * some frameworks require advanced coding, some require no coding at all 
+  * prioritize those with deep docuumentation + lots of tutorials + low barrier to entry 
+
+We'll be building with CrewAI. Why? No complex setup--you can get started in a matter or minutes. The docs are really solid, the project is 100% free and fully open-source, and the developers are constantly updating it.
+
+Step 1: 
+  * go to https://colab.research.google.com
+  * create a new notebook
+  * run !pip install -q crewai
+  * run !pip install -q 'crewai[tools]'
+
+Step 2: 
+  * now we need to add an environment variable
+    * ex: OPENAI_API_KEY='your_openai_api_key_here'
+          SERPER_API_KEY='your_serper_api_key_here'
+  * lets start with the OpenAI API key -> go to https://platform.openai.com/api-keys
+  * create a new key and copy and paste it into a text file named ".env" (above is the format)
+  * now go to https://serper.dev/signup and create an account
+  * then go to https://serper.dev/api-key and copy and paste your API key into your file 
+  * next, drag your text file into the "files" section in google colab
+        * NOTE: .env files are HIDDEN on mac (go to MAC HD and press shift+command+., may need to press the eye icon in colab to see the file, may also need to rename it if it adds .txt at the end
+  * now load the environment file with: 
+      %load_ext dotenv
+      %dotenv
+
+Step 3: 
+  * import CrewAI packages:
+    import os
+    from crewai import Agent, Task, Crew, Process
+    from crewai_tools import SerperDevTool
+
+    search_tool = SerperDevTool()
+
+    from langchain_openai import ChatOpenAI
+
+  * define your first agent with roles and goals:
+      researcher = Agent(
+        role = "Senior Research Assistant", 
+        goal = "Look up the latest advancements in AI agents", 
+        backstory = """You work at a leading tech tink tank. Your expertise lies in searching 
+        Google for AI Agent frameworks. You have a knack for dissecting complex data and                               presenting actionable insights.""",
+        verbose=False, //whether you want your responses to be long or short  
+        allow_delegation = False, //we want the researcher to do research, we don't want it to delegate this           task to another agent
+        tools=[search_tool],
+        llm=ChatOpenAI(model_name="gpt-3-turbo", temperature=0.3) //the lower the temp, the more consistent but less creative
+      )
+
+  * define your second agent with roles and goals:
+    writer = Agent(
+      role = 'Tech Content Strategist',
+      goal='Summarize the latest advancements in AI agents',
+      backstory="""You are a renowned Content Strategist, known for your insightful
+      and engaging articles. You transform complex concepts into compelling narratives.""",
+      verbose=True, 
+      allow_delegation=True, //if it needs some info it can tell the researcher to do so
+      llm=ChatOpenAI(model_name="gpt-3-turbo", temperature=0.7)
+    )
+
+  * create tasks for your agents
+    task1 = Task(
+      description="""Conduct a comprehensive analysis of the latest advancements in AI agents.
+      Identify key trends, breakthrough technologies, and potential industry impacts.""",
+      expected_output = "Full analysis report in bullet points",
+      agent=researcher //assign the researcher this task
+    )
+
+    task2 = Task(
+      description="""Using the insights provided, write a short article
+      that highlights the most significant AI advancements.
+      Your post should be informative yet accessible, catering to a tech-savvy audience.
+      Make it sound cool, avoid complex words so it doesn't sound like AI.""", 
+      expected_output = "Full blog post of at least 4 paragraphs",
+      agent = writer
+    )
+
+  * instantiate yoru crew with a sequential process
+    crew = Crew(
+      agents = [researcher, writer],
+      tasks = [task1, task2],
+      verbose = 1 //can set it to one or 2 for different logging levels
+    )
+
+###NOTE: Do not run the code too often/too many times over a short period of time, you will reach ur ChatGPT quota 
