@@ -1,0 +1,36 @@
+Task 1: Build a RAG that can access files on my local machine
+
+**Step 1: Set Up the Environment**
+
+Create and Activate a Virtual Environment: I started by creating a virtual environment to manage dependencies and ensure a clean workspace. Then, I activated the virtual environment to work within it.
+Install Necessary Libraries: I installed essential libraries like sentence-transformers, faiss-cpu, torch, transformers, PyMuPDF, python-docx, jupyter, and ipywidgets.
+
+Step 2: Prepare Sample Text Files
+
+Create and Save Text Files: I created several text files containing sample content on topics like the history of computing, machine learning, climate change, quantum computing, and blockchain technology. I saved these files in a dedicated directory.
+
+Step 3: Implement the RAG System
+
+Set Up the Jupyter Notebook: I opened a new Jupyter Notebook and imported all necessary libraries. Then, I loaded pre-trained models for sentence embedding and language generation.
+Read and Process Files: I implemented functions to read content from different file types (.txt, .pdf, .docx). I read the sample files and stored their content.
+Generate Embeddings and Index with FAISS: I generated embeddings for the document contents using sentence-transformers and indexed them using FAISS for efficient similarity search.
+
+Step 4: Create Query and Generation Functions
+
+Query System: I developed a function to encode user queries and search for the most similar documents using the FAISS index.
+Generate Answers: Initially, I implemented a function to generate answers using a local model (distilgpt2). However, I faced issues with repetitive and nonsensical outputs due to the model's limitations.
+Step 5: Integrate GPT-3.5-turbo
+
+Switch to OpenAI API: I decided to use GPT-3.5-turbo for better answer generation. After obtaining an OpenAI API key, I updated the generation function to call the OpenAI API.
+Handle API Changes: I encountered an error due to outdated API methods and updated the code to use the new OpenAI API interface (openai.ChatCompletion.create).
+
+Step 6: Create a UI with ipywidgets
+
+Set Up UI Components: I created UI components using ipywidgets for query input, setting the number of results, and a search button.
+Handle Widget Display Issues: I faced issues with ipywidgets not displaying correctly. To resolve this, I enabled necessary Jupyter extensions and ensured they were correctly installed.
+
+And, finally, things began to work as I had planned. For example, I typed in "is climate change good"... and this was the output: 
+
+"Climate change is generally not considered good, as it refers to significant and lasting changes in the Earth's climate and weather patterns that have negative impacts on the environment and human societies. The primary drivers of climate change are human activities such as burning fossil fuels, deforestation, and industrial processes, which increase the concentration of greenhouse gases in the atmosphere, leading to global warming and a range of environmental consequences. These consequences include more frequent and severe weather events, rising sea levels, loss of biodiversity, and disruptions to ecosystems.
+
+Efforts to mitigate climate change focus on reducing greenhouse gas emissions, transitioning to renewable energy sources, and implementing conservation practices to minimize the impacts of climate change and work towards a more sustainable future."
