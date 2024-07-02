@@ -1,6 +1,6 @@
 Task 1: Build a RAG that can access files on my local machine
 
-**Step 1: Set Up the Environment**
+Step 1: Set Up the Environment
 
 Create and Activate a Virtual Environment: I started by creating a virtual environment to manage dependencies and ensure a clean workspace. Then, I activated the virtual environment to work within it.
 Install Necessary Libraries: I installed essential libraries like sentence-transformers, faiss-cpu, torch, transformers, PyMuPDF, python-docx, jupyter, and ipywidgets.
