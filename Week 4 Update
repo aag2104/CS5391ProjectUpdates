@@ -101,3 +101,10 @@ Example UI:
 https://claude.ai/chat/163efffa-4e37-4b2f-938a-7fc1497044c0
 file:///Users/alexandrageer/Downloads/smu-chatbot-website.html#
 OR file:///Users/alexandrageer/Downloads/smu-chatbot-website-2.html
+
+Information we need from the user: 
+  * Majors + Minors 
+  * Honors Program? Y/N
+  * Classes Taken (degree progress summary) 
+
+Question: Will people be willing to submit this information when their id and name is on the degree summary?
