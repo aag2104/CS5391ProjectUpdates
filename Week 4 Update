@@ -34,3 +34,69 @@ And, finally, things began to work as I had planned. For example, I typed in "is
 "Climate change is generally not considered good, as it refers to significant and lasting changes in the Earth's climate and weather patterns that have negative impacts on the environment and human societies. The primary drivers of climate change are human activities such as burning fossil fuels, deforestation, and industrial processes, which increase the concentration of greenhouse gases in the atmosphere, leading to global warming and a range of environmental consequences. These consequences include more frequent and severe weather events, rising sea levels, loss of biodiversity, and disruptions to ecosystems.
 
 Efforts to mitigate climate change focus on reducing greenhouse gas emissions, transitioning to renewable energy sources, and implementing conservation practices to minimize the impacts of climate change and work towards a more sustainable future."
+
+Task 2: Beginning of Project Research 
+
+What is a Knowledge Graph? A knowledge graph is a structured representation of information that captures relationships between different entities.
+
+Knowledge Graphs and Relationships: The fundamental components of a knowledge graph are entities (also called nodes) and relationships (also called edges). Entities represent things such as people, places, organizations, and concepts, while relationships represent how these entities are connected.
+
+Why Do People Use Knowledge Graphs for Machine Learning Purposes? Improved data integration- Knowledge graphs can integrate data from diverse sources, providing a unified view. This helps AI systems access a more comprehensive and interconnected dataset, leading to better insights and decisions // Enhanced context and semantics: By capturing the relationships between entities and providing semantic context, knowledge graphs enable AI systems to understand the meaning and relevance of data. This improves the accuracy and relevance of AI outputs.
+
+How Can I Use Knowledge Graphs? 
+
+  Step 1: Identify the Domain and Scope- Determine the specific domain and scope of your project. Define the types of entities and relationships relevant to your application.
+
+  Step 2: Gather and Integrate Data- Collect data from various sources that are relevant to your domain. This could include databases, APIs, web scraping, and public datasets.
+
+  Step 3: Define Ontology and Schema- Develop an ontology or schema that defines the entities, relationships, and attributes in your knowledge graph. Tools like Protégé can help in creating and managing ontologies.
+
+  Step 4: Build the Knowledge Graph- Use tools and platforms to create and populate your knowledge graph. Popular tools and platforms include Neo4j, GraphDB, Apache Jena, and RDFLib for Python. 
+
+  Step 5: Incorporate Semantic Information- Enhance your knowledge graph with semantic information by linking it to external knowledge bases such as DBpedia, Wikidata, or domain-specific ontologies.
+
+  Step 6: Query and Analyze the Graph: Use query languages like SPARQL (for RDF-based graphs) or Cypher (for property graphs) to extract information from your knowledge graph.
+
+  Step 7: Integrate with AI Models
+
+  Step 8: Enable Reasoning and Inference- Implement reasoning capabilities to infer new knowledge from existing data. Tools like OWL reasoners (e.g., HermiT, Pellet) can help derive implicit relationships and support logical inference.
+
+How to Use BeautifulSoup (example): 
+
+  pip install beautifulsoup4 requests
+  
+  from bs4 import BeautifulSoup
+  import requests
+  
+  url = ''
+  page = requests.get(url)
+  
+  soup = BeautifulSoup(page.text, 'html')
+  
+  print(soup.prettify())
+
+NOTE: Pagination: If the data spans multiple pages, you need to handle pagination by finding the next page link and repeating the process.
+
+Project Steps: Define and develop schema/ontology -> Scrape SMU web data w/ -> convert data into knowledge graph -> create embeddings -> create a vector database -> use llm to retrieve data -> create UI 
+Potentially create a website and use agents.
+
+How to use Knowledge Graphs and Vector Databases: 
+
+1. Design and Populate the Knowledge Graph
+  Design Ontology: Use tools like Protégé to design the ontology, defining classes, properties, and relationships.
+  Populate Graph: Populate the graph using data relevant to your domain.
+
+2. Generate and Store Embeddings
+  Extract Data: Extract entities and relationships from the knowledge graph.
+  Generate Embeddings: Use models (e.g., BERT, Sentence Transformers, GloVe) to generate embeddings for textual data or other types of data.
+
+3. Store Embeddings in a Vector Database
+  Choose Vector Database: Use a vector database like Pinecone, FAISS, or Milvus.
+  Insert Embeddings: Insert the generated embeddings into the vector database, associating them with their respective entities or contexts from the knowledge graph.
+
+4. Implement Search and Retrieval
+
+Example UI: 
+
+https://claude.ai/chat/163efffa-4e37-4b2f-938a-7fc1497044c0
+file:///Users/alexandrageer/Downloads/smu-chatbot-website.html#
