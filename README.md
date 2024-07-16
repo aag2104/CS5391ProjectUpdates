@@ -1,6 +1,23 @@
 # CS5391ProjectUpdates
 This repository holds my weekly reports regarding my progress on our CS5391 project. 
 
+# Week 5
+
+This week, I've been focusing on different chunking methods for large language models (LLMs) such as GPT-3 and GPT-4. Chunking involves breaking down long texts into smaller, manageable pieces or "chunks" to fit within the token limits of these models, which enhances performance and maintains context more effectively.
+To put these methods into practice, I used Beautiful Soup to scrape a webpage and experimented with applying different chunking techniques to the extracted data.
+
+I also considered several factors to determine the best chunk size for tasks like text summarization. These factors included token limits of LLMs, memory and performance requirements, coherence and context maintenance, complexity of the text, task specificity, and the balance between performance and accuracy.
+
+To further explore chunk sizes, I implemented a script to experiment with different chunk sizes (256, 512, 1024, 2048 tokens) and evaluated the number of chunks produced. This helped in understanding how different sizes affect the chunk count and, implicitly, the potential impact on processing and performance.
+
+Overall, this week’s work has deepened my understanding of how to effectively manage large texts with LLMs and will inform future projects involving text processing and summarization.
+
+# Week 4
+
+To build a Retrieval-Augmented Generation (RAG) system that accesses files on my local machine, I began by setting up a virtual environment and installing necessary libraries such as sentence-transformers, faiss-cpu, torch, transformers, PyMuPDF, python-docx, jupyter, and ipywidgets. I then created and saved sample text files on various topics like the history of computing and climate change. Using a Jupyter Notebook, I imported the required libraries, loaded pre-trained models for sentence embedding and language generation, and implemented functions to read content from different file types. I generated embeddings for the documents using sentence-transformers and indexed them with FAISS for efficient similarity search. For querying, I encoded user queries to search for the most similar documents using the FAISS index. Initially, I used a local model (distilgpt2) for answer generation but switched to GPT-3.5-turbo via the OpenAI API for better results. I then created a UI with ipywidgets for query input and results display, resolving issues with widget display by enabling necessary Jupyter extensions. The system successfully generated relevant responses, such as explaining the negative impacts of climate change and mitigation efforts.
+
+7/5/2024: Ria, Zareenah, Grant, and I met for coffee and discussed the first steps of the project. I plan to do some research on knowledge graphs and practice using beautifulsoup before Tuesday’s meeting. I will update my GitHub page accordingly.
+
 # Week 3
 
 This week, I focused on understanding AI agents by following David Ondrej's YouTube video titled "Build Anything with AI Agents, Here's How." AI agents are poised to revolutionize technology by autonomously making decisions and taking actions towards specific goals without needing detailed human instructions. According to Andrej Karpathy, AI agents are the path to achieving Artificial General Intelligence (AGI), though it will require better large language models (LLMs), affordable API costs, and user-friendly interfaces.
