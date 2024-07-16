@@ -1,0 +1,114 @@
+Chunking Methods for LLMs:
+
+Chunking: chunking refers to the process of breaking down long texts into smaller, manageable pieces or "chunks."
+
+Why do we use chunking in the context of large language models?
+  1. Memory and Computational Constraints: LLMs, like GPT-3 or GPT-4, have a maximum token limit they can process at once. For instance, if the limit is 4096 tokens, any text longer than that needs to be chunked to fit within this constraint.
+  2. Improving Performance: Smaller chunks can improve the model's performance by reducing the complexity and potential for errors in understanding and generating responses.
+  3. Context Management: By chunking text, it's easier to manage and maintain context across interactions.
+
+Different Types of Chunking Methods: 
+  1. Fixed-Length Chunking: This method involves breaking the text into chunks of a predetermined size, typically measured in tokens.
+  2. Semantic Chunking: This method divides the text based on natural breaks, such as sentences, paragraphs, or sections.
+  3. Overlapping Chunking: Each chunk includes some overlap with the previous one to maintain context and coherence.
+  4. Sentence-Level Chunking: This method splits text into chunks based on sentences, ensuring each chunk contains whole sentences.
+  5. Hybrid Chunking: Combines elements of different chunking methods to balance their advantages.
+  6. Context-Aware Chunking: Uses semantic and contextual information to determine the best chunk boundaries, ensuring that chunks maintain the flow of meaning and coherence.
+  7. Dynamic Chunking: Adjusts chunk sizes and boundaries on-the-fly based on the content and the specific requirements of the task.
+
+Task: Use Beautiful Soup to scrape a webpage, and practice different chunking methods on that webpage data
+
+pip install requests beautifulsoup4
+
+import requests
+from bs4 import BeautifulSoup
+
+# Step 1: Scrape the Webpage
+url = 'https://www.example.com'
+response = requests.get(url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, 'html.parser')
+    text_content = soup.get_text()
+else:
+    print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+    text_content = ""
+
+# Step 2: Implement Chunking Methods
+
+# Fixed-Length Chunking
+def fixed_length_chunking(text, chunk_size):
+    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+
+# Semantic Chunking
+def semantic_chunking(text):
+    paragraphs = text.split('\n\n')
+    return paragraphs
+
+# Overlapping Chunking
+def overlapping_chunking(text, chunk_size, overlap):
+    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size - overlap)]
+
+# Example usage of chunking methods
+if text_content:
+    fixed_chunks = fixed_length_chunking(text_content, 200)
+    semantic_chunks = semantic_chunking(text_content)
+    overlapping_chunks = overlapping_chunking(text_content, 200, 50)
+    
+    # Print the first 3 chunks of each method
+    print(f"Fixed-Length Chunks: {fixed_chunks[:3]}")
+    print(f"Semantic Chunks: {semantic_chunks[:3]}")
+    print(f"Overlapping Chunks: {overlapping_chunks[:3]}")
+
+How do you decide the best chunk size? 
+  Some things to consider include...
+  1. Token Limit: Most LLMs have a maximum token limit (e.g., 2048 tokens for GPT-3, 4096 tokens for GPT-4). Ensure your chunk size stays within this limit. 
+  2. Memory and Performance: Larger chunks require more memory and computational resources. Balance chunk size with available resources.
+  3. Coherence: Choose a chunk size that maintains the coherence and context of the text. Avoid splitting sentences or paragraphs awkwardly.
+  4. Complexity: For complex or technical texts, smaller chunks may help the model better understand and process the information.
+  5. Task Specificity: Different tasks may benefit from different chunk sizes. For instance, summarization might require larger chunks to capture enough context, while question answering might work better with smaller chunks.
+  6. Performance vs. Accuracy: Smaller chunks may lead to higher accuracy by reducing context loss but can increase processing time. Larger chunks might speed up processing but risk losing context.
+
+Task: Determine the best chunk size for a text summarization
+
+pip install requests beautifulsoup4
+
+import requests
+from bs4 import BeautifulSoup
+
+# Step 1: Scrape the Webpage
+url = 'https://www.example.com'
+response = requests.get(url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, 'html.parser')
+    text_content = soup.get_text()
+else:
+    print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+    text_content = ""
+
+# Step 2: Define Chunking Methods
+def fixed_length_chunking(text, chunk_size):
+    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+
+# Step 3: Experiment with Different Chunk Sizes
+chunk_sizes = [256, 512, 1024, 2048]
+results = {}
+
+for size in chunk_sizes:
+    chunks = fixed_length_chunking(text_content, size)
+    # Perform the task (e.g., summarization) on each chunk and evaluate
+    # For simplicity, we'll just store the number of chunks here
+    results[size] = len(chunks)
+
+# Step 4: Evaluate Results
+for size, count in results.items():
+    print(f"Chunk Size: {size}, Number of Chunks: {count}")
+
+# This example focuses on chunk count; in practice, evaluate task-specific metrics
+
+
+
+
+
+
