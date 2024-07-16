@@ -24,7 +24,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Step 1: Scrape the Webpage
-url = 'https://www.example.com'
+url = 'https://en.wikipedia.org/wiki/Hanford_Engineer_Works'
 response = requests.get(url)
 
 if response.status_code == 200:
@@ -34,31 +34,39 @@ else:
     print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
     text_content = ""
 
+# Debugging: Print the first 500 characters of the scraped text content
+print("First 500 characters of text content:")
+print(text_content[:500])
+
 # Step 2: Implement Chunking Methods
 
 # Fixed-Length Chunking
 def fixed_length_chunking(text, chunk_size):
-    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+    return [text[i:i + chunk_size] for i in range(5000, len(text), chunk_size)]
 
 # Semantic Chunking
-def semantic_chunking(text):
-    paragraphs = text.split('\n\n')
+def semantic_chunking(text, start):
+    # Adjust text to start from the specified position
+    adjusted_text = text[start:]
+    paragraphs = adjusted_text.split('\n\n')
     return paragraphs
 
 # Overlapping Chunking
 def overlapping_chunking(text, chunk_size, overlap):
-    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size - overlap)]
+    return [text[i:i + chunk_size] for i in range(5000, len(text), chunk_size - overlap)]
 
 # Example usage of chunking methods
 if text_content:
     fixed_chunks = fixed_length_chunking(text_content, 200)
-    semantic_chunks = semantic_chunking(text_content)
+    semantic_chunks = semantic_chunking(text_content, 5000)  # Start from the 5000th character
     overlapping_chunks = overlapping_chunking(text_content, 200, 50)
     
     # Print the first 3 chunks of each method
     print(f"Fixed-Length Chunks: {fixed_chunks[:3]}")
     print(f"Semantic Chunks: {semantic_chunks[:3]}")
     print(f"Overlapping Chunks: {overlapping_chunks[:3]}")
+
+Note: It's interesting that the Semantic Chunking method has such bigger chunks in comparison to the other chunking methods. How do you decide the best chunk size? That seems relevant to help one discover which chunking method is right for their situation. 
 
 How do you decide the best chunk size? 
   Some things to consider include...
