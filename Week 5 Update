@@ -78,11 +78,16 @@ How do you decide the best chunk size?
   6. Performance vs. Accuracy: Smaller chunks may lead to higher accuracy by reducing context loss but can increase processing time. Larger chunks might speed up processing but risk losing context.
 
 Task: Determine the best chunk size for a text summarization
+Our Performance Metrics: Number of Chunks, Total Coherence, Average Coherence, and Processing Time
+
+You might be wondering how we are testing coherence... In the following example, we are using a simple proxy for coherence: counting the number of complete sentences within each chunk. This approach assumes that a higher number of complete sentences indicates better coherence.
+However, there are other ways to calculate coherence such as Sentence Boundary Coherence, Language Model Perplexity, and Semantic Coherence. 
 
 pip install requests beautifulsoup4
 
 import requests
 from bs4 import BeautifulSoup
+import time
 
 # Step 1: Scrape the Webpage
 url = 'https://www.example.com'
@@ -99,21 +104,69 @@ else:
 def fixed_length_chunking(text, chunk_size):
     return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
 
-# Step 3: Experiment with Different Chunk Sizes
+def semantic_chunking(text, start):
+    adjusted_text = text[start:]
+    paragraphs = adjusted_text.split('\n\n')
+    return paragraphs
+
+def overlapping_chunking(text, chunk_size, overlap):
+    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size - overlap)]
+
+# Define a simple function to calculate coherence using sentence boundaries
+def calculate_sentence_boundary_coherence(chunk):
+    return chunk.count('.') + chunk.count('!') + chunk.count('?')
+
+# Step 3: Experiment with Different Chunk Sizes and Methods
 chunk_sizes = [256, 512, 1024, 2048]
+overlap = 50  # Example overlap for overlapping chunking
+start_position = 5000  # Example start position for semantic chunking
+
+chunking_methods = {
+    'Fixed-Length': fixed_length_chunking,
+    'Semantic': semantic_chunking,
+    'Overlapping': overlapping_chunking
+}
+
 results = {}
 
-for size in chunk_sizes:
-    chunks = fixed_length_chunking(text_content, size)
-    # Perform the task (e.g., summarization) on each chunk and evaluate
-    # For simplicity, we'll just store the number of chunks here
-    results[size] = len(chunks)
+for method_name, chunking_function in chunking_methods.items():
+    results[method_name] = {}
+    for size in chunk_sizes:
+        if method_name == 'Fixed-Length':
+            chunks = chunking_function(text_content, size)
+        elif method_name == 'Overlapping':
+            chunks = chunking_function(text_content, size, overlap)
+        elif method_name == 'Semantic':
+            chunks = chunking_function(text_content, start_position)
+        
+        start_time = time.time()
+        
+        # Perform the task on each chunk and collect metrics
+        coherence_scores = [calculate_sentence_boundary_coherence(chunk) for chunk in chunks]
+        
+        end_time = time.time()
+        processing_time = end_time - start_time
+        
+        # Store the results
+        results[method_name][size] = {
+            'num_chunks': len(chunks),
+            'total_coherence': sum(coherence_scores),
+            'avg_coherence': sum(coherence_scores) / len(coherence_scores) if chunks else 0,
+            'processing_time': processing_time
+        }
 
 # Step 4: Evaluate Results
-for size, count in results.items():
-    print(f"Chunk Size: {size}, Number of Chunks: {count}")
+for method_name, method_results in results.items():
+    print(f"Chunking Method: {method_name}")
+    for size, metrics in method_results.items():
+        print(f"  Chunk Size: {size}")
+        print(f"    Number of Chunks: {metrics['num_chunks']}")
+        print(f"    Total Coherence: {metrics['total_coherence']}")
+        print(f"    Average Coherence: {metrics['avg_coherence']:.2f}")
+        print(f"    Processing Time: {metrics['processing_time']:.2f} seconds")
 
-# This example focuses on chunk count; in practice, evaluate task-specific metrics
+NOTE: Make sure you measure processing time in miliseconds... seconds will always give you 0.00 because its too large of a metric -> you can do this by changing -> processing_time = (end_time - start_time) * 1000
+
 
 
 
