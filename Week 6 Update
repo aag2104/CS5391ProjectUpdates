@@ -1,0 +1,71 @@
+Task: Begin planning medium article. (outline) 
+
+Topic of Discussion (Also potential titles): 
+  * What is the Best Chunking Method for Your RAG chatbot? 
+  * How to Find the Most Efficient Chunking Method
+  * Chunking Methods and How to Find the Best One for You
+  * How I Found the Right Chunking Method for my Project
+
+1. Introduction
+
+  What is my problem?: I don't know the best chunking method to use for my chatbot.
+  What the objection of my research?: I want to learn more about the difference chunking methods and discover which one is best for my situation through testing and experimentation.
+
+2. Background
+
+  What is chunking? What is it's role in creating a chatbot/RAG? 
+
+3. Methodology
+
+  What documents you will I use and how will I collect them? Are they all the same format? Or is there a variety? 
+  Explain each chunking method in detail.
+  Define the metrics I will use to evaluate the chunking methods (e.g., coherence, processing time, accuracy).
+  Describe how I will set up my experiment
+
+4. Results
+
+  Provide any additional experimental details. 
+  Present the results of my experiments, including graphs and tables.
+  Analyze the results to determine which chunking method performs best according to your defined metrics.
+
+5. Discussion
+
+  Interpret the results and discuss why certain chunking methods performed better than others.
+  Discuss the implications of my findings for the development of the chatbot.
+
+6. Conclusion
+
+  Summarize the key findings of my research.
+
+7. References
+
+  Include all the references I cited in my paper.
+
+Task: What is my methodology? How will I conduct my experiments? 
+
+Step 1: What data will I be using to test the chunking methods? 
+
+  The following pages have differening formats and will be used in the chatbot- 
+
+    General Education Page: https://catalog.smu.edu/content.php?catoid=63&navoid=6039
+
+    CS BS Page: https://catalog.smu.edu/preview_program.php?catoid=63&poid=16504&returnto=6032
+
+    Course Descriptions: https://catalog.smu.edu/content.php?         catoid=63&catoid=63&navoid=6034&filter%5Bitem_type%5D=3&filter%5Bonly_active%5D=1&filter%5B3%5D=1&filter%5Bcpage%5D=9#acalog_template_course_filter
+
+Step 2: Which chunking methods will I be considering?
+
+  * Fixed-Length Chunking 
+  * Semantic Chunking 
+  * Overlapping Chunking 
+
+Step 3: What metrics will I being using to decide the best method? 
+
+  First, we will test Sentence Boundary Coherence, Semantic Coherence, Context Preservation, and Processing Time on different chunk sizes
+  Then, if possible, on the best performing methods, I'd like to test the precision and recall with a chatbot mockup
+
+* Sentence Boundary Coherence: Count the number of complete sentences within each chunk.
+* Semantic Coherence: Use methods like BERTScore, which measures the semantic similarity between chunks and reference texts using contextual embeddings from models like BERT​
+* Context Preservation: Assess how well chunks retain important context, using metrics like token overlap and context retention scores.
+* Processing Time: Measures the time taken to process and chunk the text.
+* Precision and Recall: Measure how accurately the chunks reflect the necessary information for degree planning queries.
