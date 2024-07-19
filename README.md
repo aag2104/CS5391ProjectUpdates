@@ -1,6 +1,16 @@
 # CS5391ProjectUpdates
 This repository holds my weekly reports regarding my progress on our CS5391 project. 
 
+# Week 6
+
+In my weekly update, I focused on planning my research methodology for determining the best chunking method for my degree plan advisor chatbot. I started by outlining the potential article titles, such as "What is the Best Chunking Method for Your RAG Chatbot?" and "How I Found the Right Chunking Method for My Project."
+
+To address the problem of identifying the optimal chunking method, I will conduct experiments on various chunking techniques—fixed-length, semantic, and overlapping chunking. I will use documents from the online course catalog and the university website, specifically the General Education page, the CS BS page, and course descriptions, which vary in format.
+
+For my methodology, I will detail each chunking method and define the metrics for evaluation: sentence boundary coherence, semantic coherence, context preservation, processing time, and if possible, precision and recall with a chatbot mockup. My experiments will involve testing these metrics on different chunk sizes to determine the most efficient chunking method for my chatbot.
+
+Overall, this week's focus was on setting up a clear experimental framework to guide my research and ensure I gather comprehensive and accurate data for my analysis.
+
 # Week 5
 
 This week, I've been focusing on different chunking methods for large language models (LLMs) such as GPT-3 and GPT-4. Chunking involves breaking down long texts into smaller, manageable pieces or "chunks" to fit within the token limits of these models, which enhances performance and maintains context more effectively.
