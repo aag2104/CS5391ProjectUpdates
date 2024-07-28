@@ -1,0 +1,106 @@
+Task 1: Begin Scraping Data from Test Sites
+
+Starting with one page at a time, I'm going to start trying to gather the data from SMU websites (3 different test sites).
+Observing the first page, it has become clear that the data is dynamically loaded via javascript so i will have to take a couple extra steps to extract the data. 
+
+First, I installed selenium: 
+pip install selenium 
+
+Then, I changed my safari preferences so i could use SafariDriver:
+
+Steps to Set Up SafariDriver:
+  Ensure Safari is Up to Date:
+  Make sure you have the latest version of Safari installed on your Mac.
+  Enable Remote Automation:
+  Open Safari.
+  Go to Safari > Preferences or press Cmd + ,.
+  Click on the Advanced tab.
+  Check the box that says Show Develop menu in menu bar.
+  Close the preferences window.
+  Now, go to Develop in the menu bar.
+  Check the box that says Allow Remote Automation.
+
+Then, I opened Jupyter Notebook and started with this code: 
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Initialize the WebDriver for Safari
+driver = webdriver.Safari()
+
+def scrape_page(url):
+    try:
+        driver.get(url)
+        
+        # Wait for the main content to be present
+        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main-content'))
+        WebDriverWait(driver, 10).until(element_present)
+
+        # Extract text from the main content (customize based on the page structure)
+        text_elements = driver.find_elements(By.CSS_SELECTOR, '#main-content')
+        text = '\n'.join([element.text for element in text_elements])
+        
+        if not text:
+            raise Exception("No text found in the specified element.")
+        
+        return text
+    except Exception as e:
+        return f"Failed to retrieve {url}: {str(e)}"
+    finally:
+        driver.quit()
+
+# Scrape data from the URL
+url = 'https://catalog.smu.edu/content.php?catoid=63&navoid=6039'
+scraped_data = scrape_page(url)
+
+# Print the scraped data
+print(f"Data from {url}:\n{scraped_data[:500]}...\n")  # Print the first 500 characters of the scraped text
+
+
+HOWEVER, this code was not working. Nothing was being extracted from the website. I quickly realized that i has to inspect the page and find out what css_selector to choose that encompasses the content i want to extract. '#main_content' was not a selector. The selector i needed to use was 'td.block_content'. I also added some more debugging and instead of extracting just the first 500 chars, i want to extract the whole page.
+
+So my code was changed to: 
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Initialize the WebDriver for Safari
+driver = webdriver.Safari()
+
+def scrape_page(url):
+    try:
+        print(f"Accessing {url}")
+        driver.get(url)
+        
+        print("Waiting for main content to load...")
+        # Wait for the element with the class 'block_content'
+        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, 'td.block_content'))
+        WebDriverWait(driver, 20).until(element_present)
+        
+        print("Extracting text...")
+        text_elements = driver.find_elements(By.CSS_SELECTOR, 'td.block_content')
+        text = '\n'.join([element.text for element in text_elements])
+        
+        if not text.strip():
+            raise Exception("No text found in the specified element.")
+        
+        return text
+    except Exception as e:
+        return f"Failed to retrieve {url}: {str(e)}"
+    finally:
+        print("Closing WebDriver...")
+        driver.quit()
+
+# Scrape data from the URL
+url = 'https://catalog.smu.edu/content.php?catoid=63&navoid=6039'
+scraped_data = scrape_page(url)
+
+# Print the entire scraped data
+print(f"Data from {url}:\n{scraped_data}\n")
+
+
+
