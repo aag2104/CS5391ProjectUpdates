@@ -102,5 +102,137 @@ scraped_data = scrape_page(url)
 # Print the entire scraped data
 print(f"Data from {url}:\n{scraped_data}\n")
 
+Now, I need to extract the data from all 3 webpages. Here is the updated code: 
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+def scrape_page(url):
+    driver = webdriver.Safari()
+    try:
+        print(f"Accessing {url}")
+        driver.get(url)
+        
+        print("Waiting for main content to load...")
+        # Wait for the element with the class 'block_content'
+        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, 'td.block_content'))
+        WebDriverWait(driver, 20).until(element_present)
+        
+        print("Extracting text...")
+        text_elements = driver.find_elements(By.CSS_SELECTOR, 'td.block_content')
+        text = '\n'.join([element.text for element in text_elements])
+        
+        if not text.strip():
+            raise Exception("No text found in the specified element.")
+        
+        return text
+    except Exception as e:
+        return f"Failed to retrieve {url}: {str(e)}"
+    finally:
+        print("Closing WebDriver...")
+        driver.quit()
+
+# List of URLs to scrape
+urls = [
+    'https://catalog.smu.edu/content.php?catoid=63&navoid=6039',
+    'https://catalog.smu.edu/preview_program.php?catoid=63&poid=16504&returnto=6032',
+    'https://catalog.smu.edu/content.php?catoid=63&catoid=63&navoid=6034&filter%5Bitem_type%5D=3&filter%5Bonly_active%5D=1&filter%5B3%5D=1&filter%5Bcpage%5D=9#acalog_template_course_filter'
+]
+
+# Dictionary to store scraped data
+scraped_data = {}
+
+# Scrape data from each URL
+for url in urls:
+    scraped_data[url] = scrape_page(url)
+
+# Print the scraped data
+for url, data in scraped_data.items():
+    print(f"Data from {url}:\n{data}\n")
+
+Now, I've noticed a slight problem. One of the pages has clickable buttons that show more text. I want to capture that text when I scrape the website. Let's update the code to account for that.
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+def scrape_page(url):
+    driver = webdriver.Safari()
+    try:
+        print(f"Accessing {url}")
+        driver.get(url)
+        
+        print("Waiting for the page to load...")
+        # Wait for the initial content to be present
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'td.block_content')))
+        
+        print("Finding buttons to reveal more content...")
+        # Locate the buttons by the href pattern and the onclick attribute
+        buttons = WebDriverWait(driver, 20).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a[onclick^="showCourse("]'))
+        )
+        print(f"Found {len(buttons)} buttons")
+        
+        all_content_text = []
+        
+        if buttons:
+            for index, button in enumerate(buttons):
+                try:
+                    print(f"Clicking button {index + 1} of {len(buttons)}")
+                    driver.execute_script("arguments[0].click();", button)
+                    # Debugging: check if the button click reveals more content
+                    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'table.td_dark')))
+                    
+                    print("Extracting text from block_content...")
+                    block_content_elements = driver.find_elements(By.CSS_SELECTOR, 'td.block_content')
+                    block_content_text = '\n'.join([element.text for element in block_content_elements])
+                    
+                    print("Extracting text from td_dark...")
+                    td_dark_elements = driver.find_elements(By.CSS_SELECTOR, 'table.td_dark')
+                    td_dark_text = '\n'.join([element.text for element in td_dark_elements])
+                    
+                    combined_text = block_content_text + '\n' + td_dark_text
+                    
+                    if combined_text.strip():
+                        all_content_text.append(combined_text)
+                except Exception as e:
+                    print(f"Failed to click button {index + 1}: {str(e)}")
+        
+        if not all_content_text:
+            raise Exception("No text found in the specified elements.")
+        
+        return '\n'.join(all_content_text)
+    except Exception as e:
+        return f"Failed to retrieve {url}: {str(e)}"
+    finally:
+        print("Closing WebDriver...")
+        driver.quit()
+
+# List of URLs to scrape
+urls = [
+    'https://catalog.smu.edu/content.php?catoid=63&navoid=6039',
+    'https://catalog.smu.edu/preview_program.php?catoid=63&poid=16504&returnto=6032',
+    'https://catalog.smu.edu/content.php?catoid=63&catoid=63&navoid=6034&filter%5Bitem_type%5D=3&filter%5Bonly_active%5D=1&filter%5B3%5D=1&filter%5Bcpage%5D=9#acalog_template_course_filter'
+]
+
+# Dictionary to store scraped data
+scraped_data = {}
+
+# Scrape data from each URL
+for url in urls:
+    scraped_data[url] = scrape_page(url)
+
+# Print the scraped data
+for url, data in scraped_data.items():
+    print(f"Data from {url}:\n{data}\n")
+
+^ That took quite a bit of trial and error. I had trouble finding the right CSS selector for the buttons. Then I discovered the buttons use the "on click attribute"
+But, now, I've unfortuantely run into another problem. Things are being printed out multiple times, AND I want to save everything into files... lets fix it.
+
+still working on this problem...
+
 
 
