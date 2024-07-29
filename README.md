@@ -3,7 +3,9 @@ This repository holds my weekly reports regarding my progress on our CS5391 proj
 
 # Week 7
 
-This week, I focused on scraping data from three SMU test sites. Initially, I encountered challenges because the data on the first page was dynamically loaded via JavaScript. To address this, I installed Selenium and configured SafariDriver by updating Safari preferences to enable remote automation. Using Selenium in a Jupyter Notebook, I wrote a script to scrape data, starting with identifying the correct CSS selectors. The initial selector, `#main_content`, was incorrect, so I updated it to `td.block_content`, which successfully extracted the desired text. I expanded the script to scrape multiple pages and handle dynamically loaded content by clicking buttons to reveal additional information. Despite these improvements, I encountered issues with multiple print statements and saving the scraped data to files, which I am continuing to resolve. Once I have successfully scraped all the data, I plan to begin testing different chunking methods and writing my final article.
+This week, I focused on scraping data from three SMU test sites. Initially, I encountered challenges because the data on the first page was dynamically loaded via JavaScript. To address this, I installed Selenium and configured SafariDriver by updating Safari preferences to enable remote automation. Using Selenium in a Jupyter Notebook, I wrote a script to scrape data, starting with identifying the correct CSS selectors. The initial selector, `#main_content`, was incorrect, so I updated it to `td.block_content`, which successfully extracted the desired text. I expanded the script to scrape multiple pages and handle dynamically loaded content by clicking buttons to reveal additional information. 
+
+Despite these improvements, I encountered issues with multiple print statements and saving the scraped data to files, which I am continuing to resolve. Once I have successfully scraped all the data, I plan to begin testing different chunking methods and writing my final article.
 
 # Week 6
 
